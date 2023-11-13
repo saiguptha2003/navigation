@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+
+</head>
+<body>
+    <div class="container">
+        <div class="map-container">
+            <iframe class="map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d984956.6951071024!2d73.34719659461445!3d15.35008449426105!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bbfba106336b741%3A0xeaf887ff62f34092!2sGoa!5e0!3m2!1sen!2sin!4v1699855906337!5m2!1sen!2sin" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="form-container">
+            <label for="source">Source District</label>
+            <input type="text" id="source" name="source" placeholder="Enter source district">
+
+            <label for="destination">Destination District</label>
+            <input type="text" id="destination" name="destination" placeholder="Enter destination district">
+
+            <button onclick="findRoutes()">Show Route</button>
+            <div class="route-container" id="routeContainer">
+                <!-- Routes will be displayed here -->
+            </div>
+        </div>
+       
+    </div>
+    
+    <script>
+        function findRoutes() {
+            var source = document.getElementById('source').value;
+            var destination = document.getElementById('destination').value;
+
+            // Replace 'YOUR_MAPQUEST_API_KEY' with your actual API key
+            var apiKey = 'h3oe5LqPVXR19d80onjBG9E76iHNH4IN';
+
+            // Construct the API request URL
+            var apiUrl = `https://www.mapquestapi.com/directions/v2/route?key=${apiKey}&from=${source}&to=${destination}`;
+
+            // Fetch data from the API
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.route && data.route.legs.length > 0) {
+                        // Extract and display route information
+                        var routeInfo = data.route.legs[0].maneuvers.map(maneuver => maneuver.narrative);
+                        displayRoutes(routeInfo);
+                    } else {
+                        console.log('No routes found.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    console.log('Error fetching routes.');
+                });
+        }
+
+        function displayRoutes(routes) {
+            var routeContainer = document.getElementById('routeContainer');
+            routeContainer.innerHTML = '<h3>Route Information:</h3>';
+        
+            if (routes.length > 0) {
+                var ul = document.createElement('ul');
+        
+                routes.forEach(route => {
+                    var li = document.createElement('li');
+                    li.textContent = route;
+                    ul.appendChild(li);
+                });
+        
+                routeContainer.appendChild(ul);
+            } else {
+                routeContainer.innerHTML += '<p>No routes found.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
